@@ -1,60 +1,60 @@
 from Hike import hikes
 from Locations import h_locations
 from Locations import h_directions
-from HikeQueue import Queue
+from MyGraphSearch import bfs
+from MyGraphSearch import dfs
 
-# hike_string = ""
-# for location, hikes in h_locations.items(): 
-#     for hike in hikes.values():
-#         hike_string += "{0} - {1}\n".format(location, hike)
-# print(hike_string)
+# Greeting / Options start
+direction_string = ""
+for directions in h_directions.keys():
+    direction_string += "{0}\n".format(directions)
 
-def reccomendation_queue_direction():
-    d_queue = Queue()
-    print("Which area of Arizona would you like to hike today?")
-    direction_input = input()
-    if direction_input in h_directions.keys():
-        towns = h_directions[direction_input]
-        print("Your hike choices include: ")
-        for town in towns:
-            d_queue.enqueue(town)
+def greeting():
+    print("Welcome to Hiking Arizona!")
+    print("We'll recommend some of our favorite places and trails for you today.")
+    print("First let's start with a direction: \n" + direction_string)
+
+def hike_rec():
+    greeting()
+
+# Search helper functions
+def get_direction(): 
+    direction_input = input("What area of Arizona would you like to hike in?")
+    if h_directions[direction_input]:
+        direction_choice = h_directions[direction_input]
+        return direction_choice
+    elif direction_input == "Weast":
+        print("Mayonnaise is not an instrument.")
+        get_direction()
     else:
-        print("Your choice must be North, South, East, or West.")
-        return reccomendation_queue_direction()
+        print("Unfortunately, that's not a direction, please choose from North, South, East, or West.")
+        get_direction()
+        # else and elif returning KeyError
 
-t_queue = Queue()
+town_string = ""
+for towns in h_locations.keys():
+    town_string += "{0}\n".format(towns)
 
-def rec_queue_town():
-    print("Which town would you like to hike near?")
-    town_input = input()
-    if town_input in h_locations.keys():
-        towns = h_locations[town_input]
-        print("Your hike choices include: ")
-        for hike in towns:
-            t_queue.enqueue(hike)
+def get_location():
+    location_input = input("What town or city will you travel to?")
+    hike_matches = []
+    if h_locations[location_input]:
+        location_choice = h_locations[location_input]
+        for hike in location_choice:
+            print(hike + "\n")
+            for hike2 in hikes.keys():
+                if hike == hike2:
+                    hike_matches.append(hike)
+        return hike_matches
     else:
-        print("Your choice must be one of the previously displayed locations.")
-        return rec_queue_town()
+        print("Sorry, that's not a location provided, please choose from the listed options: " + town_string)
+        get_location()
 
-def rec_queue_hike_diff():
-    print("What kind of hike are you looking for: easy, moderate, or hard?")
-    diff_input = input()
-    h_queue = Queue()
-    if not t_queue:
-        print("No hikes found in the are that are " + diff_input)
-    while t_queue:
-        if hikes.keys() in t_queue:
-            pass
-
-    # if diff_input not in hikes.values():
-    #     return True
-        # t_queue.pop()
-    # else:
-    #     return False
-        # print("Your choice must be one of the previously displayed locations.")
-        # return rec_queue_hike_diff()
+# Getting Hike Recommendation (minus miles and diff choice)
+# def get_hike(direction_choice, location_choice):
+    
 
 
-print(reccomendation_queue_direction())
-print(rec_queue_town())
-print(rec_queue_hike_diff())
+print(hike_rec())
+print(get_direction())
+print(get_location())
